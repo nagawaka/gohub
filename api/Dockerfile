@@ -1,10 +1,10 @@
-FROM golang:1.8
+FROM golang:1.9
 
 WORKDIR /go/src/app
 COPY . .
 
 RUN go get -d -v ./...
-RUN go install -v ./...
+RUN go get github.com/pilu/fresh
 RUN go get -u github.com/gorilla/mux
 
-CMD ["app"]
+RUN go install -v ./...

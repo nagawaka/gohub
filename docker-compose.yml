@@ -1,7 +1,12 @@
 version: '3'
 services:
   api:
-    image: golang:1.13.2-buster
     build: ./api
+    tty: true
+    stdin_open: true
+    restart: always
+    command: fresh
+    volumes:
+      - ./api/src/app:/go/src/app
     ports:
-    - "8080:8080"
+      - "8080:8080"
