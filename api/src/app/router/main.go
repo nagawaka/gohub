@@ -29,6 +29,7 @@ type UserStruct struct {
 type RepositoriesStruct struct {
 	TotalCount int
 	PageInfo struct {
+		HasNextPage bool
 		EndCursor string
 		StartCursor string
 	}
@@ -59,14 +60,24 @@ func homeLink(w http.ResponseWriter, r *http.Request) {
 
 func fetchStarred(w http.ResponseWriter, r *http.Request) {
 	client := graphql.NewClient("https://api.github.com/graphql")
+	vars := mux.Vars(r)
 
-	req := graphql.NewRequest(`
+	urlParams := r.URL.Query();
+	var nextCursor = ""
+
+	if urlParams.Get("next") != "" {
+		nextCursor = fmt.Sprintf(", after: \"%v\"", urlParams.Get("next"));
+	}
+
+
+	req := graphql.NewRequest(fmt.Sprintf(`
 	query ($login: String!) { 
 		user(login: $login) {
 			id
-			starredRepositories(first: 2) {
+			starredRepositories(first: 2%v) {
 				totalCount
 				pageInfo {
+					hasNextPage
 					endCursor
 				}
 				edges {
@@ -83,9 +94,8 @@ func fetchStarred(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	`)
+	`, nextCursor))
 
-	vars := mux.Vars(r)	
 	req.Var("login", fmt.Sprintf("%v", vars["username"]))
 
 	// set any variables
