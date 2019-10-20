@@ -74,7 +74,7 @@ func fetchStarred(w http.ResponseWriter, r *http.Request) {
 	query ($login: String!) { 
 		user(login: $login) {
 			id
-			starredRepositories(first: 2%v) {
+			starredRepositories(first: 50%v) {
 				totalCount
 				pageInfo {
 					hasNextPage
