@@ -1,2 +1,3 @@
 api/src/app/tmp/
 .env
+.DS_Store
