@@ -20,6 +20,11 @@ type ResponseStruct struct {
 	User UserStruct
 }
 
+type ErrorStruct struct {
+    Code int `json:"code"`
+    Message string `json:"message"`
+}
+
 type UserStruct struct {
 	// name string
 	Id string
@@ -41,6 +46,10 @@ type RepositoriesStruct struct {
 			Tags string
 		}
 	}
+}
+
+func (err *ErrorStruct) Error() string {
+  return fmt.Sprintf("[%d] %s", err.Code, err.Message);
 }
 
 func homeLink(w http.ResponseWriter, r *http.Request) {
@@ -103,18 +112,31 @@ func fetchStarred(w http.ResponseWriter, r *http.Request) {
 	req.Header.Add("Authorization", fmt.Sprintf("bearer %s", os.Getenv("GITHUB_ACCESS_TOKEN")))
 	ctx := context.Background()
 
-	// log.Print(req.Header);
-
-	// run it and capture the response
 	var respData ResponseStruct
 	if err := client.Run(ctx, req, &respData); err != nil {
-		log.Fatal(err)
-	}
-
-	// w.Write([]byte(fmt.Sprintf("%v", respData)));
+		// fmt.Println("f1 failed:", err)
+		// c, err := json.Marshal(ErrorStruct{2, "Erro"})
+		
+		
+		// // var errorData ErrorStruct
+		// // errorData.Error = err.Error();
+		// // b, err := json.Marshal(errorData)
+		// 	// log.Fatal(err.Error())
+		
+		// if err != nil {
+			// 	w.Header().Set("Content-Type", "application/json")
+			// 	json.NewEncoder(w).Encode(c)
+			
+			// 	// w.Write(c)
+			// 	return
+			// }
+		}
+	// fmt.Println("f1 failed:", err)
 	
-	// m := ApiVersion{"1.0"}
-	respData.User.StarredRepositories.Edges[0].Node.Tags = "Tags"
+	// if respData.User.StarredRepositories.Edges[0] != nil {
+	// 	respData.User.StarredRepositories.Edges[0].Node.Tags = "Tags"
+	// }
+
 	b, err := json.Marshal(respData)
 	log.Print(respData);
 

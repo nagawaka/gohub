@@ -12,3 +12,18 @@ services:
       - "8080:8080"
     env_file:
       - .env
+  mysql:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "3307:3307"
+    expose:
+      - '3307'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=gohub
+      - MYSQL_USER=gohub
+      - MYSQL_PASSWORD=gohub_pass
+    # volumes:
+    #   - ./scripts/db/:/docker-entrypoint-initdb.d/
